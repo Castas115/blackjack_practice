@@ -5,6 +5,11 @@ import (
     "math/rand"
 )
 
+type Deck struct {
+    items []int
+    deckNum int
+}
+
 func StarterDeck(deckNum int) Deck {
 	if deckNum <= 0 { // TODO: How many decks should be played?
 		panic("choose a sensible deck count")
@@ -23,11 +28,6 @@ func StarterDeck(deckNum int) Deck {
 	}
 
     return deck
-}
-
-type Deck struct {
-    items []int
-    deckNum int
 }
 
 func (s *Deck) Push(item int) {
