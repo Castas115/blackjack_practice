@@ -1,9 +1,7 @@
 package main
 
 import (
-    "fmt"
-    "math/rand"
-    "packages/deck"
+    "github.com/Castas115/blackjack_practice/packages"
 )
 
 func main() {

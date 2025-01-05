@@ -1,3 +1,10 @@
+package deck
+
+import (
+    "fmt"
+    "math/rand"
+)
+
 func StarterDeck(deckNum int) Deck {
 	if deckNum <= 0 { // TODO: How many decks should be played?
 		panic("choose a sensible deck count")
