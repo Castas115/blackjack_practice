@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	game := game.StartGame(6)
+	game := game.StartGame(6, 2)
 	game.Print()
 }
 
