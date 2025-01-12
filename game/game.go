@@ -15,11 +15,11 @@ func StartGame(decks int, players int) Game {
 	game.Deck = StarterDeck(decks)
 	game.Deck.Shuffle()
 	game.Players = make([]Player, players)
-	game.DealAll()
+	game.DealTurn()
 	return game
 }
 
-func (game *Game) DealAll() {
+func (game *Game) DealTurn() {
 	game.Deal(&game.DealerHand)
 	game.Deal(&game.DealerHand)
 	for i := range game.Players {
@@ -35,6 +35,8 @@ func (game *Game) Deal(hand *Hand) {
 	}
 	hand.Deal(card)
 }
+
+// func (game *Game) FinishTurn() 
 
 func (game *Game) PlayerHandsAsString() []string{
 	hands := []string{}
