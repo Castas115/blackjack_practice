@@ -7,17 +7,13 @@ import (
 )
 
 type model struct {
-    hands	[]string
     cursor  int
-    selected []string 
 	game	game.Game
 }
 func initialModel() model {
 	game := game.StartGame(6,2)
 	return model{
 		game:	game,
-		hands:	game.PlayerHandsAsString(),
-		selected: make([]string, len(game.PlayerHands)),
 	}
 }
 
@@ -26,28 +22,28 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
+	currentPlayer := &m.game.Players[m.cursor]
 	switch msg := msg.(type){
 		case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "j": // Stand
-			m.selected[m.cursor] = "st"
+			currentPlayer.Action = "st"
 			m.cursor++
 		case "k": // Hit
-			m.selected[m.cursor] = "hi"
-			m.game.Deal(&m.game.PlayerHands[m.cursor])
-			m.hands = m.game.PlayerHandsAsString()
-			if (m.game.PlayerHands[m.cursor].Count() > 21) { // busted
-				m.selected[m.cursor] = "bu"
+			currentPlayer.Action = "hi"
+			m.game.Deal(&currentPlayer.Hand)
+			if (m.game.Players[m.cursor].Hand.Count() > 21) { // busted
+				currentPlayer.Action = "bu"
 				m.cursor++
 			}
 		case "l": // Double Down
-			m.selected[m.cursor] = "dd"
+			currentPlayer.Action = "dd"
 		case ";": // Split
-			m.selected[m.cursor] = "sp"
+			currentPlayer.Action = "sp"
 		case "h": // Surrender
-			m.selected[m.cursor] = "su"
+			currentPlayer.Action = "su"
 		case "backspace": // correct las move
 			if m.cursor > 0 {
 				m.cursor--
@@ -66,12 +62,14 @@ func (m model) View() string {
 	s = "[;] - (sp) Split\n"
 	s = "[h] - (su) Surrender\n"
 	s = "      Dealer: " + dealerHand + "\n\n"
-	for i, hand := range m.hands {
+	for i, player := range m.game.Players {
 		cursor := " "
 		if m.cursor == i {
 			cursor = ">"
 		}
-		s += fmt.Sprintf("%s [%s]  %s\n", cursor, fmt.Sprintf("%2s", m.selected[i]), hand)
+		action := fmt.Sprintf("%2s", player.Action)
+
+		s += fmt.Sprintf("%s [%s]  %s\n", cursor, action, player.Hand.ToString(false))
 	}
 	s += "\n q para salir manin"
 	return s

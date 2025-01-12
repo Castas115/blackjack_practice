@@ -5,8 +5,7 @@ import (
 )
 
 type Hand struct {
-	cards			[]int
-	wager		int
+	cards []int
 }
 
 func (hand *Hand) Deal(card int) {

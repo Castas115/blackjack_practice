@@ -5,16 +5,16 @@ import (
 )
 
 type Game struct {
-	Deck Deck
-	DealerHand Hand
-	PlayerHands []Hand
+	Deck		Deck
+	DealerHand	Hand
+	Players		[]Player
 }
 
-func StartGame(decks int, playerHands int) Game {
+func StartGame(decks int, players int) Game {
 	game := Game{}
 	game.Deck = StarterDeck(decks)
 	game.Deck.Shuffle()
-	game.PlayerHands = make([]Hand, playerHands)
+	game.Players = make([]Player, players)
 	game.DealAll()
 	return game
 }
@@ -22,18 +22,10 @@ func StartGame(decks int, playerHands int) Game {
 func (game *Game) DealAll() {
 	game.Deal(&game.DealerHand)
 	game.Deal(&game.DealerHand)
-	for i := range game.PlayerHands {
-		game.Deal(&game.PlayerHands[i])
-		game.Deal(&game.PlayerHands[i])
+	for i := range game.Players {
+		game.Deal(&game.Players[i].Hand)
+		game.Deal(&game.Players[i].Hand)
 	}
-}
-
-func (game *Game) PlayerHandsAsString() []string{
-	hands := []string{}
-	for _,hand := range game.PlayerHands {
-		hands = append(hands, hand.ToString(false))
-	}
-	return hands
 }
 
 func (game *Game) Deal(hand *Hand) {
@@ -44,5 +36,10 @@ func (game *Game) Deal(hand *Hand) {
 	hand.Deal(card)
 }
 
-
-
+func (game *Game) PlayerHandsAsString() []string{
+	hands := []string{}
+	for _,player := range game.Players {
+		hands = append(hands, player.Hand.ToString(false))
+	}
+	return hands
+}
