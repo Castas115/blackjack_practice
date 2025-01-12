@@ -28,27 +28,31 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 	switch msg := msg.(type){
 		case tea.KeyMsg:
-			switch msg.String() {
-			case "ctrl+c", "q":
-				return m, tea.Quit
-			case "j": // Stand
-				m.selected[m.cursor] = "st"
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+		case "j": // Stand
+			m.selected[m.cursor] = "st"
+			m.cursor++
+		case "k": // Hit
+			m.selected[m.cursor] = "hi"
+			m.game.Deal(&m.game.PlayerHands[m.cursor])
+			m.hands = m.game.PlayerHandsAsString()
+			if (m.game.PlayerHands[m.cursor].Count() > 21) { // busted
+				m.selected[m.cursor] = "bu"
 				m.cursor++
-			case "k": // Hit
-				m.selected[m.cursor] = "hi"
-				m.game.Deal(&m.game.PlayerHands[m.cursor])
-			case "l": // Double Down
-				m.selected[m.cursor] = "dd"
-			case ";": // Split
-				m.selected[m.cursor] = "sp"
-			case "h": // Surrender
-				m.selected[m.cursor] = "su"
-			case "backspace": // correct las move
-				if m.cursor > 0 {
-					m.cursor--
-				}
-
 			}
+		case "l": // Double Down
+			m.selected[m.cursor] = "dd"
+		case ";": // Split
+			m.selected[m.cursor] = "sp"
+		case "h": // Surrender
+			m.selected[m.cursor] = "su"
+		case "backspace": // correct las move
+			if m.cursor > 0 {
+				m.cursor--
+			}
+		}
 	}
 	return m, nil
 }
@@ -75,7 +79,6 @@ func (m model) View() string {
 
 func main() {
 	// game := game.StartGame(6, 2)
-	// game.Print()
 	p := tea.NewProgram(initialModel())
 	p.Run()
 }
