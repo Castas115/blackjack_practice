@@ -5,34 +5,36 @@ import (
 )
 
 type Hand struct {
-	cards []int
+	cards			[]int
+	wager		int
 }
 
 func (hand *Hand) Deal(card int) {
 	hand.cards = append(hand.cards, card)
 }
 
-func (hand *Hand) Print(hideFirstCard bool) {
-	fmt.Print(" [ ")
-	for _,card := range hand.cards {
+func (hand *Hand) ToString(hideFirstCard bool) string {
+	s := " [ "
+	for _, card := range hand.cards {
 		if (hideFirstCard) {
-			fmt.Print("_ ")
+			s += "_ "
 			hideFirstCard = false
 		} else {
 			if (card == 1) {
-				fmt.Print("*")
+				s += "*"
 			} else if (card < 10) {
-				fmt.Print(" ")
+				s += " "
 			}
-			fmt.Print(card, " ")
+			s += fmt.Sprintf("%d ", card)
 		}
 	}
-	fmt.Println("]")
+	s += "]"
+	return s
 }
 
 func (hand *Hand) Count() int {
 	count := 0
-	for card := range hand.cards {
+	for _, card := range hand.cards {
 		count += card
 	}
 	return count

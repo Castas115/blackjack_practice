@@ -1,50 +1,48 @@
 package game
 
 import (
-	"fmt"
+	// "fmt"
 )
 
 type Game struct {
-	deck Deck
-	dealerHand Hand
-	playerHands []Hand
+	Deck Deck
+	DealerHand Hand
+	PlayerHands []Hand
 }
 
 func StartGame(decks int, playerHands int) Game {
 	game := Game{}
-	game.deck = StarterDeck(decks)
-	game.deck.Shuffle()
-	game.playerHands = make([]Hand, playerHands)
-	game.InitialDeal()
+	game.Deck = StarterDeck(decks)
+	game.Deck.Shuffle()
+	game.PlayerHands = make([]Hand, playerHands)
+	game.DealAll()
 	return game
 }
 
-func (game *Game) InitialDeal() {
-	game.Deal(&game.dealerHand)
-	game.Deal(&game.dealerHand)
-	for i := range game.playerHands {
-		game.Deal(&game.playerHands[i])
-		game.Deal(&game.playerHands[i])
+func (game *Game) DealAll() {
+	game.Deal(&game.DealerHand)
+	game.Deal(&game.DealerHand)
+	for i := range game.PlayerHands {
+		game.Deal(&game.PlayerHands[i])
+		game.Deal(&game.PlayerHands[i])
 	}
 }
 
-func (game *Game) Print() {
-	fmt.Print("             ̈́Dealer:")
-	game.dealerHand.Print(true)
-	fmt.Println("")
-	fmt.Println("")
-	for i := range game.playerHands {
-		fmt.Print("Hand ",i+1,":")
-		game.playerHands[i].Print(false)
-		fmt.Println("")
+func (game *Game) PlayerHandsAsString() []string{
+	hands := []string{}
+	for _,hand := range game.PlayerHands {
+		hands = append(hands, hand.ToString(false))
 	}
+	return hands
 }
 
 func (game *Game) Deal(hand *Hand) {
-	card, wasCardDraw := game.deck.Pop()
+	card, wasCardDraw := game.Deck.Pop()
 	if (!wasCardDraw) {
 		panic("wtf there was no deck left")
 	}
 	hand.Deal(card)
 }
+
+
 
