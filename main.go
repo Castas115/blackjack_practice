@@ -60,16 +60,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 			case "h": // Surrender
 				currentPlayer.Action = "su"
 			case "backspace": // correct las move
-				if m.cursor > 0 {
+				if (m.cursor > 0 && m.game.Players[m.cursor-1].Action == "st") {
 					m.cursor--
+					m.game.Players[m.cursor].Action = "  "
 				}
-			case "enter": // finishing the turn
 			}
 		} else if (m.turnStatus == AskFinish) {
 			switch msg.String() {
 			case "backspace": // correct las move
-				m.cursor--
-				m.turnStatus = Play
+				if (m.game.Players[m.cursor].Action == "st") {
+					currentPlayer.Action = "  "
+					m.turnStatus = Play
+				}
 			case "enter": // finishing the turn
 				m.turnStatus = SeeResults
 			}
