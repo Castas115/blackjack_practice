@@ -1,31 +1,35 @@
 package main
 
 import (
-	"github.com/Castas115/blackjack_practice/game"
-    tea "github.com/charmbracelet/bubbletea"
 	"fmt"
+	"strconv"
+
+	"github.com/Castas115/blackjack_practice/game"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
     cursor  int
 	game	game.Game
 	turnStatus TurnStatus
+	betSizeInput string
 }
 
 func initialModel() model {
 	game := game.StartGame(6,3)
 	return model{
 		game:	game,
-		turnStatus: Play,
+		turnStatus: AskBetSize,
 	}
 }
 
 type TurnStatus int
 
 const (
-	Play TurnStatus = 0
-	AskFinish TurnStatus = 1
-	SeeResults TurnStatus = 2
+	AskBetSize	TurnStatus = 0
+	Play		TurnStatus = 1
+	AskFinish	TurnStatus = 2
+	SeeResults	TurnStatus = 3
 )
 
 
@@ -41,7 +45,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 			return m, tea.Quit
 		}
 
-		if (m.turnStatus == Play) {
+		if (m.turnStatus == AskBetSize) {
+			switch msg.String() {
+			case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+				num, _ := strconv.ParseFloat(msg.String(), 32)
+				m.game.BetSize = float32(num)
+				m.turnStatus = Play
+			}
+		} else if (m.turnStatus == Play) {
 			switch msg.String() {
 			case "j": // Stand
 				currentPlayer.Action = "st"
@@ -85,28 +96,31 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 
 func (m model) View() string {
 	s := "[q] to exit \n\n"
-	s += fmt.Sprintf("%d", m.cursor)
-	s += "\n"
+	if (m.turnStatus == AskBetSize) {
+		s += "Enter bet size between 0 and 9"
+	} else {
+		dealerHand := m.game.DealerHand.ToString(m.turnStatus != SeeResults)
+		s += "[j] - (st) Stand\n"
+		s += "[k] - (hi) Hit\n"
+		s += "[l] - (dd) Double Down\n"
+		s += "[;] - (sp) Split\n"
+		s += "[h] - (su) Surrender\n"
+		s += "\n"
+		s += fmt.Sprintf("Bet size  %d\n", int8(m.game.BetSize))
+		s += "      Dealer: " + dealerHand + "\n\n"
+		for i, player := range m.game.Players {
+			cursor := " "
+			if m.cursor == i {
+				cursor = ">"
+			}
+			action := fmt.Sprintf("%2s", player.Action)
 
-	dealerHand := m.game.DealerHand.ToString(m.turnStatus != SeeResults)
-	s += "[j] - (st) Stand\n"
-	s += "[k] - (hi) Hit\n"
-	s += "[l] - (dd) Double Down\n"
-	s += "[;] - (sp) Split\n"
-	s += "[h] - (su) Surrender\n"
-	s += "      Dealer: " + dealerHand + "\n\n"
-	for i, player := range m.game.Players {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
+			s += fmt.Sprintf("%s [%s]  %s\n", cursor, action, player.Hand.ToString(false))
 		}
-		action := fmt.Sprintf("%2s", player.Action)
-
-		s += fmt.Sprintf("%s [%s]  %s\n", cursor, action, player.Hand.ToString(false))
-	}
-	if (m.turnStatus == AskFinish) {
-		s += "\n Do you want to finish the turn?"
-		s += "\n    [enter] Yes     [bcsp] No, correct last"
+		if (m.turnStatus == AskFinish) {
+			s += "\n Do you want to finish the turn?"
+			s += "\n    [enter] Yes     [bcsp] No, correct last"
+		}
 	}
 
 	return s

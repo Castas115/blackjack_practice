@@ -8,6 +8,7 @@ type Game struct {
 	Deck		Deck
 	DealerHand	Hand
 	Players		[]Player
+	BetSize		float32
 }
 
 func StartGame(decks int, players int) Game {
