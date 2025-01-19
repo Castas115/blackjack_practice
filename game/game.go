@@ -21,9 +21,11 @@ func StartGame(decks int, players int) Game {
 }
 
 func (game *Game) DealTurn() {
+	game.DealerHand.Empty()
 	game.Deal(&game.DealerHand)
 	game.Deal(&game.DealerHand)
 	for i := range game.Players {
+		game.Players[i].FinishTurn()
 		game.Deal(&game.Players[i].Hand)
 		game.Deal(&game.Players[i].Hand)
 	}
@@ -36,8 +38,6 @@ func (game *Game) Deal(hand *Hand) {
 	}
 	hand.Deal(card)
 }
-
-// func (game *Game) FinishTurn() 
 
 func (game *Game) PlayerHandsAsString() []string{
 	hands := []string{}

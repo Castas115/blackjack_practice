@@ -47,3 +47,7 @@ func (hand *Hand) Count() int {
 	}
 	return count
 }
+
+func (hand *Hand) Empty()  {
+	hand.cards = hand.cards[:0]
+}

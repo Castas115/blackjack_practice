@@ -11,6 +11,18 @@ type Player struct {
 	Balance float32
 }
 
+type Action int
+
+const (
+	Stand	Action = 0
+	Hit		Action = 1
+	Busted	Action = 2
+	Blackjack	Action = 2
+	DoubleDown	Action = 3
+	Split	Action = 3
+	Surrender	Action = 3
+)
+
 func (player *Player) ResolveRoundOutcome(dealerHand Hand)  {
 	playerHandCount := player.Hand.Count()
 	dealerHandCount := dealerHand.Count()
@@ -35,4 +47,9 @@ func (player *Player) ResolveRoundOutcome(dealerHand Hand)  {
 			player.Balance += player.Wager
 			player.Action = "wi"
 	}
+}
+
+func (player *Player) FinishTurn()  {
+	player.Action = ""
+	player.Hand.Empty()
 }

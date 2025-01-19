@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"strconv"
-
 	"github.com/Castas115/blackjack_practice/game"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -86,8 +85,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 			case "enter": // finishing the turn
 				m.turnStatus = SeeResults
 			}
-		} else if (m.turnStatus == SeeResults && msg.String() == "enter") {
-				m.turnStatus = Play
+		} else if (m.turnStatus == SeeResults) {
+			if (msg.String() == "enter") {
+					m.game.DealTurn()
+					m.cursor = 0
+					m.turnStatus = Play
+			}
 		}
 	}
 
