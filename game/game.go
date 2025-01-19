@@ -39,11 +39,3 @@ func (game *Game) Deal(hand *Hand) {
 	hand.Deal(card)
 }
 
-func (game *Game) PlayerHandsAsString() []string{
-	hands := []string{}
-	for _,player := range game.Players {
-		hands = append(hands, player.Hand.ToString(false))
-	}
-	return hands
-}
-
