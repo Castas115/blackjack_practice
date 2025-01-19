@@ -29,6 +29,9 @@ func (game *Game) DealTurn() {
 		game.Players[i].FinishTurn()
 		game.Deal(&game.Players[i].Hand)
 		game.Deal(&game.Players[i].Hand)
+		if (game.Players[i].Hand.Count() == 21) {
+			game.Players[i].Action = "bl"
+		}
 	}
 }
 

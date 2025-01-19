@@ -52,6 +52,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 				m.turnStatus = Play
 			}
 		} else if (m.turnStatus == Play) {
+
+			if (currentPlayer.Action == "bl") { // next turn with any inpu
+				m.nextPlayer()
+				return m, nil
+			}
+
 			switch msg.String() {
 			case "j": // Stand
 				currentPlayer.Action = "st"
@@ -59,8 +65,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 			case "k": // Hit
 				currentPlayer.Action = "hi"
 				m.game.Deal(&currentPlayer.Hand)
-				if (m.game.Players[m.cursor].Hand.Count() > 21) { // busted
+				if (currentPlayer.Hand.Count() > 21) { // busted
 					currentPlayer.Action = "bu"
+					m.nextPlayer()
+				} else if (currentPlayer.Hand.Count() == 21) { // Blackack
+					currentPlayer.Action = "bl"
 					m.nextPlayer()
 				}
 			case "l": // Double Down
@@ -70,15 +79,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 			case "h": // Surrender
 				currentPlayer.Action = "su"
 			case "backspace": // correct las move
-				if (m.cursor > 0 && m.game.Players[m.cursor-1].Action == "st") {
+				if (len(m.game.Players) > 1 && m.cursor > 0 && m.game.Players[m.cursor-1].Action == "st") {
 					m.cursor--
-					m.game.Players[m.cursor].Action = "  "
+					currentPlayer.Action = "  "
 				}
 			}
 		} else if (m.turnStatus == AskFinish) {
 			switch msg.String() {
 			case "backspace": // correct las move
-				if (m.game.Players[m.cursor].Action == "st") {
+				if (currentPlayer.Action == "st") {
 					currentPlayer.Action = "  "
 					m.turnStatus = Play
 				}
@@ -138,10 +147,9 @@ func (m model) View() string {
 
 func (m *model) nextPlayer() {
 	endCursor := len(m.game.Players) - 1
-	if (m.cursor < endCursor) {
+	if (m.cursor < endCursor && endCursor > 0) {
 		m.cursor++
 	} else {
-	// if (m.cursor == endCursor) {
 		if (m.turnStatus == Play) {
 			m.turnStatus = AskFinish
 		}
