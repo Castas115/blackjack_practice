@@ -33,7 +33,7 @@ const (
 
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return tea.ClearScreen
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
