@@ -8,19 +8,23 @@ type Player struct {
 	Hand	Hand
 	Wager	float32
 	Action	string
+	Result	Result
 	Balance float32
 }
 
-type Action int
+type Result string
 
 const (
-	Stand	Action = 0
-	Hit		Action = 1
-	Busted	Action = 2
-	Blackjack	Action = 2
-	DoubleDown	Action = 3
-	Split	Action = 3
-	Surrender	Action = 3
+	Blackjack	Result = "Blackjack"
+	Win			Result = "Win      "
+	Lose		Result = "Lose     "
+
+	// Busted		Action = "Busted"
+	// Stand	Action = 0
+	// Hit		Action = 1
+	// DoubleDown	Action = 3
+	// Split	Action = 3
+	// Surrender	Action = 3
 )
 
 func (player *Player) ResolveRoundOutcome(dealerHand Hand)  {
@@ -30,22 +34,28 @@ func (player *Player) ResolveRoundOutcome(dealerHand Hand)  {
 	dealerBusted := dealerHandCount > 21
 
 	if playerHandCount == 21 {
-		player.Balance += player.Wager * 1.5
-		player.Action = "BL"
+		player.Result = Blackjack
 	} else if (!playerBusted && !dealerBusted) {
 		if (playerHandCount > dealerHandCount) {
-			player.Balance += player.Wager
-			player.Action = "wi"
+			player.Result = Win
 		} else {
-			player.Balance -= player.Wager
-			player.Action = "lo"
+			player.Result = Lose
 		}
-	} else if (playerBusted) {
-			player.Balance -= player.Wager
-			player.Action = "bu"
+	} else if playerBusted {
+			player.Result = Lose
 	} else {
-			player.Balance += player.Wager
-			player.Action = "wi"
+			player.Result = Win
+	}
+	player.ResolveBalance()
+}
+
+func (player *Player) ResolveBalance()  {
+	if (player.Result == Blackjack) {
+		player.Balance += player.Wager * 1.5
+	} else if (player.Result == Win) {
+		player.Balance += player.Wager
+	} else {
+		player.Balance -= player.Wager
 	}
 }
 

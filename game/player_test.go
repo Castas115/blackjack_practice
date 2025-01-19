@@ -10,7 +10,7 @@ func TestResolveRoundOutcome(t *testing.T) {
 		name		string
 		player		Player
 		dealerHand	Hand
-		expected	string
+		expected	Result
 		err			error
 	}
 
@@ -20,50 +20,50 @@ func TestResolveRoundOutcome(t *testing.T) {
 				name:		"Blackjack vs normal",
 				player:		Player{Hand: Hand{cards: []int{10, 1}}},
 				dealerHand:	Hand{cards: []int{10, 8}},
-				expected:	"BL",
+				expected:	Blackjack,
 			},
 			{
 				name:		"Blackjack vs Blackjack",
 				player:		Player{Hand: Hand{cards: []int{10, 1}}},
 				dealerHand:	Hand{cards: []int{10, 1}},
-				expected:	"BL",
+				expected:	Blackjack,
 			},
 			{
 				name:		"Win normal",
 				player:		Player{Hand: Hand{cards: []int{10, 9}}},
 				dealerHand:	Hand{cards: []int{10, 8}},
-				expected:	"wi",
+				expected:	Win,
 			},
 			{
 				name:		"Win dealer bust",
 				player:		Player{Hand: Hand{cards: []int{10, 9}}},
 				dealerHand:	Hand{cards: []int{10, 8, 8}},
-				expected:	"wi",
+				expected:	Win,
 			},
 			{
 				name:		"Lose vs blackjack",
 				player:		Player{Hand: Hand{cards: []int{10, 7}}},
 				dealerHand:	Hand{cards: []int{10, 1}},
-				expected:	"lo",
+				expected:	Lose,
 			},
 			{
 				name:		"Lose normal",
 				player:		Player{Hand: Hand{cards: []int{10, 7}}},
 				dealerHand:	Hand{cards: []int{10, 8}},
-				expected:	"lo",
+				expected:	Lose,
 			},
 			{
 				name:		"Busted",
 				player:		Player{Hand: Hand{cards: []int{10, 7, 5}}},
 				dealerHand:	Hand{cards: []int{10, 8}},
-				expected:	"bu",
+				expected:	Lose,
 			},
 		}
 
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
 				test.player.ResolveRoundOutcome(test.dealerHand)
-				actual := test.player.Action
+				actual := test.player.Result
 				assert.Equal(t, test.expected, actual)
 			})
 		}
