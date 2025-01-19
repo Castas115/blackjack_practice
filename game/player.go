@@ -1,9 +1,5 @@
 package game
 
-// import (
-//     "fmt"
-// )
-
 type Player struct {
 	Hand	Hand
 	Wager	float32
@@ -18,6 +14,7 @@ const (
 	Blackjack	Result = "Blackjack"
 	Win			Result = "Win      "
 	Lose		Result = "Lose     "
+	None		Result = "         "
 
 	// Busted		Action = "Busted"
 	// Stand	Action = 0
