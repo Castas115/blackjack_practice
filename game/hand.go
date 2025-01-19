@@ -33,8 +33,17 @@ func (hand *Hand) ToString(hideFirstCard bool) string {
 
 func (hand *Hand) Count() int {
 	count := 0
+	aceCount := 0
 	for _, card := range hand.cards {
+		if (card == 1) {
+			aceCount++
+		}
 		count += card
+	}
+	for i := 0; i < aceCount; i++ {
+		if (count + 10 <= 21){
+			count += 10
+		}
 	}
 	return count
 }
