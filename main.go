@@ -83,6 +83,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 					m.turnStatus = Play
 				}
 			case "enter": // finishing the turn
+				m.game.ResolveRoundOutcome()
 				m.turnStatus = SeeResults
 			}
 		} else if (m.turnStatus == SeeResults) {
@@ -119,6 +120,12 @@ func (m model) View() string {
 			action := fmt.Sprintf("%2s", player.Action)
 
 			s += fmt.Sprintf("%s [%s]  %s\n", cursor, action, player.Hand.ToString(false))
+			if (m.turnStatus == SeeResults) {
+				s += fmt.Sprintf("%s | Bet: %.1f\t| Balance: %.1f\n", player.Result, player.Wager, player.Balance)
+			} else {
+				s += "\n"
+			}
+			s += "\n"
 		}
 		if (m.turnStatus == AskFinish) {
 			s += "\n Do you want to finish the turn?"

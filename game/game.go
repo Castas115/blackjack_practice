@@ -25,6 +25,7 @@ func (game *Game) DealTurn() {
 	game.Deal(&game.DealerHand)
 	game.Deal(&game.DealerHand)
 	for i := range game.Players {
+		game.Players[i].Result = None
 		game.Players[i].FinishTurn()
 		game.Deal(&game.Players[i].Hand)
 		game.Deal(&game.Players[i].Hand)
@@ -39,3 +40,9 @@ func (game *Game) Deal(hand *Hand) {
 	hand.Deal(card)
 }
 
+func (game *Game) ResolveRoundOutcome() {
+	for i := range game.Players {
+		game.Players[i].Wager = game.BetSize
+		game.Players[i].ResolveRoundOutcome(game.DealerHand)
+	}
+}
